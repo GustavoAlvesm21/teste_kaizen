@@ -75,7 +75,6 @@ def calcula_pontuacao(tickers):
     sp_ataque = soma_atributos_especificos(tickers, 'sp_attack')
     sp_defesa = soma_atributos_especificos(tickers, 'sp_defense')
 
-    # Captura apenas os valores escalares, não o Series
     corr_ataque = corr.loc[corr['atributo'] == 'attack', 'correlacao'].iloc[0]
     corr_defesa = corr.loc[corr['atributo'] == 'defense', 'correlacao'].iloc[0]
     corr_velocidade = corr.loc[corr['atributo'] == 'speed', 'correlacao'].iloc[0]
@@ -110,7 +109,7 @@ total_participacoes = total_participacoes.reset_index()
 total_participacoes.columns = ['id', 'participacoes']
 total_participacoes = total_participacoes.merge(pokemons[['id','name']], on='id')
 total_participacoes = total_participacoes.set_index('id')
-total_participacoes = total_participacoes[['participacoes']]  # reorganizar
+total_participacoes = total_participacoes[['participacoes']]
 
 taxa_vitoria = total_vitorias / total_participacoes['participacoes']
 taxa_vitoria = taxa_vitoria.reset_index()
@@ -197,19 +196,15 @@ with aba1:
     
     with st.container(horizontal=True, gap="medium"):
         cols = st.columns(2, gap="medium", width="stretch", border=True)
-        #grafico da matriz de correlacao
         with cols[0]:
             fig_corr = px.bar(corr.drop(index=0), x='atributo', y='correlacao', title='Correlação dos Atributos com a Taxa de Vitória', labels={'atributo': 'Atributo', 'correlacao': 'Correlação'})
             st.plotly_chart(fig_corr, use_container_width=True)
-        #Tipos de Pokémons com Maior Taxa de Vitória
         with cols[1]:
             fig_winrate = px.bar(infos_winrate, x=infos_winrate.index, y='win_rate', title='Top 5 Tipos de Pokémons com Maior Taxa de Vitória', labels={'index': 'Tipo', 'win_rate': 'Taxa de Vitória'})
             st.plotly_chart(fig_winrate, use_container_width=True)
-        #geração mais vitoriosa
         with cols[0]:
             fig_geracoes = px.pie(geracoes_vitoriosas, values='win_rate', names=geracoes_vitoriosas.index, title='Taxa de Vitória Média por Geração', labels={'index': 'Geração', 'win_rate': 'Taxa de Vitória'})
             st.plotly_chart(fig_geracoes, use_container_width=True)
-        #porcentagem de vitorias de pokemons lendarios vs nao lendarios
         with cols[1]:
             lendarios = infos_winrate = df_para_corr.groupby('legendary')['win_rate'].mean().sort_values(ascending=False)
             lendarios.index = lendarios.index.map({1: 'Lendário', 0: 'Não Lendário'})
@@ -359,5 +354,6 @@ with aba2:
     """
     Pokemons Disponíveis para Seleção
     """
+
 
     pokemon_data_win_rate
